@@ -16,9 +16,11 @@ export default function MovieDetails({
 
   const countRef = useRef(0);
 
-  const isWatched = watched.map((movie) => movie.filmId).includes(selectedId);
+  const isWatched = watched
+    .map((movie) => movie.kinopoiskId)
+    .includes(selectedId);
   const watchedUserRating = watched.find(
-    (movie) => movie.filmId === selectedId
+    (movie) => movie.kinopoiskId === selectedId
   )?.userRating;
 
   const {
