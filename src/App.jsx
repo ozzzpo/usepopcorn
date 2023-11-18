@@ -34,7 +34,9 @@ export default function App() {
   };
 
   const handleDeleteWatched = (id) => {
-    setWatched((watched) => watched.filter((movie) => movie.imdbId !== id));
+    setWatched((watched) =>
+      watched.filter((movie) => movie.kinopoiskId !== id)
+    );
   };
 
   return (

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import StarRating from "./UI/StarRating";
 import Loader from "./UI/Loader";
 import { useKey } from "../utils/hooks/useKey";
-const API_KEY = "cc1496b0";
+const API_KEY = "5f2030de-3793-410d-8fd1-54bb92345941";
 
 export default function MovieDetails({
   selectedId,
@@ -16,33 +16,30 @@ export default function MovieDetails({
 
   const countRef = useRef(0);
 
-  const isWatched = watched.map((movie) => movie.imdbId).includes(selectedId);
+  const isWatched = watched.map((movie) => movie.filmId).includes(selectedId);
   const watchedUserRating = watched.find(
-    (movie) => movie.imdbId === selectedId
+    (movie) => movie.filmId === selectedId
   )?.userRating;
 
   const {
-    Title: title,
-    Year: year,
-    Poster: poster,
-    Runtime: runtime,
-    imdbRating,
-    Plot: plot,
-    Released: released,
-    Actors: actors,
-    Director: director,
-    Genre: genre,
+    genres,
+    year,
+    nameRu: title,
+    posterUrl: poster,
+    filmLength: runtime,
+    ratingKinopoisk,
+    description: plot,
   } = movie;
 
   const handleAdd = () => {
     const newWatchedMovie = {
-      imdbId: selectedId,
+      kinopoiskId: selectedId,
       title,
       year,
       poster,
-      imdbRating: Number(imdbRating),
+      rating: Number(ratingKinopoisk),
       userRating,
-      runtime: Number(runtime.split(" ").at(0)),
+      runtime: runtime,
       countRatingDecisions: countRef.current,
     };
     onAddWatched(newWatchedMovie);
@@ -59,7 +56,14 @@ export default function MovieDetails({
     const getMovieDetails = async () => {
       setIsLoading(true);
       const res = await fetch(
-        `http://www.omdbapi.com/?apikey=${API_KEY}&i=${selectedId}`
+        `https://kinopoiskapiunofficial.tech/api/v2.2/films/${selectedId}`,
+        {
+          method: "GET",
+          headers: {
+            "X-API-KEY": API_KEY,
+            "Content-Type": "application/json",
+          },
+        }
       );
       const data = await res.json();
       setMovie(data);
@@ -76,7 +80,7 @@ export default function MovieDetails({
       document.title = "usePopcorn";
     };
   }, [title]);
-
+  console.log();
   return (
     <div className='details'>
       {isLoading ? (
@@ -92,12 +96,16 @@ export default function MovieDetails({
             <div className='details-overview'>
               <h2>{title}</h2>
               <p>
-                {released} &bull; {runtime}
+                {year} &bull; {runtime} мин
               </p>
-              <p>{genre}</p>
               <p>
+                {genres
+                  ?.map((genreObj) => (genreObj = genreObj.genre))
+                  .join(", ")}
+              </p>
+              <p>
+                Рейтинг на кинопоиске: {ratingKinopoisk}
                 <span>⭐</span>
-                {imdbRating} IMDb rating
               </p>
             </div>
           </header>
@@ -107,6 +115,7 @@ export default function MovieDetails({
               {!isWatched ? (
                 <>
                   <StarRating
+                    starClassName='stars'
                     maxRating={10}
                     size={24}
                     onSetRating={setUserRating}
@@ -114,7 +123,7 @@ export default function MovieDetails({
                   />
                   {userRating > 0 && (
                     <button className='btn-add' onClick={handleAdd}>
-                      Добавить в просмотренные
+                      Добавить
                     </button>
                   )}
                 </>
@@ -127,8 +136,6 @@ export default function MovieDetails({
             <p>
               <em>{plot}</em>
             </p>
-            <p>Актёры: {actors}</p>
-            <p>Режиссёр: {director}</p>
           </section>
         </>
       )}

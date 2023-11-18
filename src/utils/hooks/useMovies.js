@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const API_KEY = "cc1496b0";
+const API_KEY = "5f2030de-3793-410d-8fd1-54bb92345941";
 export function useMovies(query, callback) {
   const [movies, setMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -15,17 +15,24 @@ export function useMovies(query, callback) {
         setError("");
         setIsLoading(true);
         const res = await fetch(
-          `http://www.omdbapi.com/?apikey=${API_KEY}&s=${query}`,
-          { signal: controller.signal }
+          `https://kinopoiskapiunofficial.tech/api/v2.1/films/search-by-keyword?keyword=${query}&page=1`,
+          {
+            method: "GET",
+            signal: controller.signal,
+            headers: {
+              "X-API-KEY": API_KEY,
+              "Content-Type": "application/json",
+            },
+          }
         );
-
         if (!res.ok) throw new Error("something went wrong");
 
         const data = await res.json();
         if (data.Response === "False") throw new Error("Movie not found");
 
-        setMovies(data.Search ? data.Search : []);
+        setMovies(data.films ? data.films : []);
         setError("");
+        console.log(data);
       } catch (err) {
         console.log(err.message);
         if (err.name !== "AbortError") {
@@ -47,5 +54,6 @@ export function useMovies(query, callback) {
       controller.abort();
     };
   }, [query]);
+
   return { movies, isLoading, error };
 }

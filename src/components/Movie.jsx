@@ -1,16 +1,20 @@
+import schedule from "./UI/img/schedule.png";
+
 export default function Movie({ movie, onSelectMovie }) {
   return (
     <li
       onClick={() => {
-        onSelectMovie(movie.imdbID);
+        onSelectMovie(movie.filmId);
       }}
     >
-      <img src={movie.Poster} alt={`${movie.Title} poster`} />
-      <h3>{movie.Title}</h3>
+      <img src={movie.posterUrl} alt={`${movie.nameRu} poster`} />
+      <h3>{movie.nameRu}</h3>
       <div>
         <p>
-          <span>🗓</span>
-          <span>{movie.Year}</span>
+          <span>
+            <img src={schedule} alt='#' style={{ width: "18px" }} />
+          </span>
+          <span>{movie.year ? movie.year : "Неизвестен"}</span>
         </p>
       </div>
     </li>
