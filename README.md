@@ -1,3 +1,5 @@
+## React app to search movies and rate them. 
+
 ### `yarn start`
 
 Runs the app in the development mode.\
